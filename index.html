@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Map test</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.3.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.3.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body {
+        margin: 0 auto;
+        max-width: 50rem;
+        padding: 0;
+        }
+
+        #map {
+        height: 800px;
+        width: 100%;
+        }
+
+        .marker {
+            background-image: url('mapbox-icon.png');
+            background-size: cover;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .mapboxgl-popup {
+            max-width: 200px;
+        }
+
+        .mapboxgl-popup-content {
+            font-family: 'Open Sans', sans-serif;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Testing Map</h1>
+
+<p><a href="https://docs.mapbox.com/help/tutorials/custom-markers-gl-js/">Doc for creating markers</a>.</p>
+
+<div id="map"></div>
+
+<p>Does this work?</p>
+
+<script>
+    // Access token.
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic2FtaWtlaWpvbmVuMTB1cCIsImEiOiJjazBtMTdkYXEwNTA5M21zZWZ4aHFmZWU5In0.M3y5RmPOU_PKsoQg3sCEGg';
+
+    // Data for guides
+    var geojson = {
+        type: 'FeatureCollection',
+        features: [{
+            type: 'Feature',
+            geometry: {
+            type: 'Point',
+            coordinates: [10.7522, 59.9139]
+            },
+            properties: {
+            title: 'Oslo',
+            description: 'The city of Oslo',
+            descriptionOpt: 'The city of Oslo (FR)',
+            link: 'https://docs.mapbox.com/help/tutorials/custom-markers-gl-js/',
+            linkOpt: 'https://docs.mapbox.com/help/tutorials/custom-markers-gl-js/'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: {
+            type: 'Point',
+            coordinates: [24.934011, 60.191168]
+            },
+            properties: {
+            title: 'Helsinki',
+            description: 'The city of Helsinki',
+            descriptionOpt: 'The city of Helsinki (FR)',
+            link: 'https://cityguides.fb.com/guides/bordeaux-en/',
+            linkOpt: 'https://cityguides.fb.com/guides/bordeaux-fr/'
+            }
+        }]
+    };
+
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/light-v10',
+        center: [10.7522, 59.9139],
+        zoom: 3
+    });
+
+    // Add Zoom control
+    map.addControl(new mapboxgl.NavigationControl());
+
+    // add markers to map
+    geojson.features.forEach(function(marker) {
+        // create a HTML element for each feature
+        var el = document.createElement('div');
+        el.className = 'marker';
+
+        // make a marker for each feature and add to the map
+        new mapboxgl.Marker(el)
+            .setLngLat(marker.geometry.coordinates)
+            .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+                .setHTML(
+                    `<h2>${ marker.properties.title }</h2>
+                    <p><a href="${ marker.properties.link }">${ marker.properties.description }</a></p>
+                    <p><a href="${ marker.properties.linkOpt }">${ marker.properties.descriptionOpt }</a></p>
+                    `
+                    ))
+            .addTo(map);
+    });
+
+</script>
+
+</body>
+</html>
